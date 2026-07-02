@@ -10,12 +10,17 @@ class TarotCard extends StatefulWidget {
 }
 
 class _TarotCardState extends State<TarotCard> with SingleTickerProviderStateMixin {
-  bool flipped=false;
+  bool flipped=true;
   late AnimationController flipcontroller;
+  late Animation<double> rotationAnimation;
+  late final Animation<double> curve;
   @override 
   void initState() {
     super.initState();
-    flipcontroller=AnimationController(vsync: this,duration: const Duration(milliseconds: 800));
+    flipped=false;
+    flipcontroller=AnimationController(vsync: this,duration: const Duration(milliseconds: 800), reverseDuration: const Duration(milliseconds: 500));
+    rotationAnimation=CurvedAnimation(parent: flipcontroller, curve: Curves.easeInOut);
+    curve=Tween<double>(begin: 0.0, end: math.pi).animate(rotationAnimation);
   }
   @override
   void dispose(){
@@ -26,25 +31,26 @@ class _TarotCardState extends State<TarotCard> with SingleTickerProviderStateMix
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {
-        setState(() {
-          flipped = !flipped;
-          if(flipped){
-            flipcontroller.forward();
-          }
-          else {
-            flipcontroller.reverse();
-          }
-              
-        });
+        if(flipped){
+          flipcontroller.reverse();
+        }else{
+          flipcontroller.forward();
+        }
+        flipped=!flipped;
        
       },
       child: AnimatedBuilder(
         animation: flipcontroller,
-       
+
         builder: (context, child) {
-          final angle =flipcontroller.value*math.pi;
+          final angle =curve.value;
           print(angle);
-          return Transform(alignment: Alignment.center, transform: Matrix4.identity()..setEntry(3, 2, 0.002)..rotateY(angle),  child: angle > math.pi / 2 ? TarotBack() : TarotFront());
+          return 
+          Transform(alignment: Alignment.center, 
+          transform: Matrix4.identity()..setEntry(3, 2, 0.002)
+                                       ..rotateY(angle),  
+          child: angle <= math.pi / 2 ? TarotBack() : Transform(alignment: Alignment.center,transform: Matrix4.identity()
+                                       ..rotateY(math.pi), child: TarotFront()) );
         },
       ),
 
