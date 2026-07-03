@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:lottie/lottie.dart';
 class TarotFront extends StatelessWidget {
   const TarotFront({
     super.key,
@@ -12,7 +13,7 @@ class TarotFront extends StatelessWidget {
   });
 
   final String cardName;
-  final IconData icon;
+  final String icon;
   final Widget? illustration;
   final double width;
   final double height;
@@ -62,7 +63,7 @@ class TarotFront extends StatelessWidget {
                           shape: BoxShape.circle,
                           border: Border.all(color: accent, width: 1.5),
                         ),
-                        child: Icon(icon, color: accent, size: 30),
+                        child: Lottie.asset(icon, width: 48, height: 48),
                       ),
                 ),
               ),

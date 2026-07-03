@@ -1,5 +1,6 @@
 import 'dart:math' as math;
 import 'package:flutter/material.dart';
+import 'package:lottie/lottie.dart';
 import 'package:rashivashi_app/widgets/tarotcard.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -11,7 +12,7 @@ class HomeScreen extends StatefulWidget {
 
 class _CardData {
   final String name;
-  final IconData icon;
+  final String icon;
 
   const _CardData(this.name, this.icon);
 }
@@ -20,11 +21,11 @@ class _HomeScreenState extends State<HomeScreen> {
   static const _accent = Color(0xFFD4AF37);
 
   final List<_CardData> cards = const [
-    _CardData("The Sun", Icons.sunny),
-    _CardData("The Moon", Icons.nightlight_round),
-    _CardData("The Star", Icons.star),
-    _CardData("The Lovers", Icons.favorite),
-    _CardData("The Fool", Icons.explore),
+    _CardData("The Sun", 'assets/lottie/sun.json'),
+    _CardData("The Moon", 'assets/lottie/moon.json'),
+    _CardData("The Star", 'assets/lottie/star.json'),
+    _CardData("The Lovers", 'assets/lottie/lovers.json'),
+    _CardData("The Fool", 'assets/lottie/joker.json'),
   ];
 
   final math.Random random = math.Random();

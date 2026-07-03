@@ -10,7 +10,7 @@ class TarotCard extends StatefulWidget {
                     required this.icon,
   });
    final String cardName;
-  final IconData icon;
+  final String icon;
   @override
   State<TarotCard> createState() => _TarotCardState();
 }
