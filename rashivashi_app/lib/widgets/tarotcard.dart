@@ -5,7 +5,12 @@ import 'package:rashivashi_app/widgets/tarot_back.dart';
 import 'package:rashivashi_app/widgets/tarot_front.dart';
 
 class TarotCard extends StatefulWidget {
-  const TarotCard({super.key});
+  const TarotCard({super.key,
+                   required this.cardName,
+                    required this.icon,
+  });
+   final String cardName;
+  final IconData icon;
   @override
   State<TarotCard> createState() => _TarotCardState();
 }
@@ -110,7 +115,7 @@ class _TarotCardState extends State<TarotCard> with TickerProviderStateMixin {
                     child: Transform(
                       alignment: Alignment.center,
                       transform: Matrix4.identity()..rotateY(math.pi),
-                      child: TarotFront(),
+                      child: TarotFront(cardName: widget.cardName, icon: widget.icon),
                     ),
                   ),
           );
