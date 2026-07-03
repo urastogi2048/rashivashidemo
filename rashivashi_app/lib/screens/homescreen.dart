@@ -9,36 +9,68 @@ class HomeScreen extends StatefulWidget {
   State<HomeScreen> createState() => _HomeScreenState();
 }
 
+class _CardData {
+  final String name;
+  final IconData icon;
+
+  const _CardData(this.name, this.icon);
+}
+
 class _HomeScreenState extends State<HomeScreen> {
   static const _accent = Color(0xFFD4AF37);
 
-  int _drawCount = 0;
+  final List<_CardData> cards = const [
+    _CardData("The Sun", Icons.sunny),
+    _CardData("The Moon", Icons.nightlight_round),
+    _CardData("The Star", Icons.star),
+    _CardData("The Lovers", Icons.favorite),
+    _CardData("The Fool", Icons.explore),
+  ];
+
+  final math.Random random = math.Random();
+
+  int currentIndex = 0;
 
   void _drawNewCard() {
-    setState(() => _drawCount++);
-   
+    int next;
+
+    do {
+      next = random.nextInt(cards.length);
+    } while (next == currentIndex);
+
+    setState(() {
+      currentIndex = next;
+    });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    //drawcontroller.dispose();
+    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
+    final currentCard = cards[currentIndex];
+
     return Scaffold(
       body: Container(
         decoration: const BoxDecoration(
           gradient: LinearGradient(
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
-            colors: [
-              Color(0xFF050308), 
-              Color(0xFF120A24),
-              Color(0xFF050308), 
-            ],
+            colors: [Color(0xFF050308), Color(0xFF120A24), Color(0xFF050308)],
             stops: [0.0, 0.55, 1.0],
           ),
         ),
         child: Stack(
           children: [
             Positioned.fill(child: CustomPaint(painter: _StarfieldPainter())),
-
             SafeArea(
               child: Column(
                 children: [
@@ -65,12 +97,54 @@ class _HomeScreenState extends State<HomeScreen> {
                               gradient: RadialGradient(
                                 colors: [
                                   _accent.withOpacity(0.18),
-                                  _accent.withOpacity(0.0),
+                                  Colors.transparent,
                                 ],
                               ),
                             ),
                           ),
-                          TarotCard(key: ValueKey(_drawCount)),
+                          AnimatedSwitcher(
+                            duration: const Duration(milliseconds: 500),
+                            switchInCurve: Curves.easeOut,
+                            switchOutCurve: Curves.easeIn,
+                            transitionBuilder: (child, animation) {
+                              final isIncoming =
+                                  animation.status != AnimationStatus.reverse;
+
+                              final offset =
+                                  Tween<Offset>(
+                                    begin: isIncoming
+                                        ? const Offset(
+                                            1.0,
+                                            0,
+                                          ) // enter from right
+                                        : Offset.zero,
+                                    end: isIncoming
+                                        ? Offset.zero
+                                        : const Offset(
+                                            -1.0,
+                                            0,
+                                          ), // leave to left
+                                  ).animate(
+                                    CurvedAnimation(
+                                      parent: animation,
+                                      curve: Curves.easeInOut,
+                                    ),
+                                  );
+
+                              return FadeTransition(
+                                opacity: animation,
+                                child: SlideTransition(
+                                  position: offset,
+                                  child: child,
+                                ),
+                              );
+                            },
+                            child: TarotCard(
+                              key: ValueKey(currentIndex),
+                              cardName: currentCard.name,
+                              icon: currentCard.icon,
+                            ),
+                          ),
                         ],
                       ),
                     ),
@@ -109,17 +183,20 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 }
+
 class _StarfieldPainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     final random = math.Random(42);
-    final paint = Paint()..color = Colors.white;
+    final paint = Paint();
 
     for (int i = 0; i < 60; i++) {
       final dx = random.nextDouble() * size.width;
       final dy = random.nextDouble() * size.height;
       final radius = random.nextDouble() * 1.2 + 0.3;
+
       paint.color = Colors.white.withOpacity(random.nextDouble() * 0.5 + 0.1);
+
       canvas.drawCircle(Offset(dx, dy), radius, paint);
     }
   }

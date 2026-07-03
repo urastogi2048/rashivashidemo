@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 class TarotFront extends StatelessWidget {
   const TarotFront({
     super.key,
-    this.cardName = 'The Fool',
-    this.icon = Icons.auto_awesome,
+    required this.cardName,
+    required this.icon,
     this.illustration,
     this.width = 200,
     this.height = 340,
